@@ -10,11 +10,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 #[Fillable(['title', 'content', 'cover_image'])]
 class Entry extends Model
 {
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     public function user(): BelongsTo
     {
