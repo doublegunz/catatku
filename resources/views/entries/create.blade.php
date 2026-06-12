@@ -9,7 +9,7 @@
     <h2 class="text-lg font-semibold text-gray-900 mb-4">Write New Entry</h2>
 
     <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <form method="POST" action="/entries">
+        <form method="POST" action="/entries" enctype="multipart/form-data">
             @csrf
 
             {{-- Title --}}
@@ -51,6 +51,21 @@
                 >{{ old('content') }}</textarea>
                 @error('content')
                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Cover image --}}
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #1e293b;">
+                    Cover Image (optional)
+                </label>
+                <input type="file" name="cover_image" accept="image/*"
+                       style="border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; width: 100%; box-sizing: border-box;">
+                <p style="color: #9ca3af; font-size: 0.8em; margin-top: 4px;">
+                    JPG, PNG, or WebP. Max 2MB.
+                </p>
+                @error('cover_image')
+                    <p style="color: #dc2626; font-size: 0.85em; margin-top: 4px;">{{ $message }}</p>
                 @enderror
             </div>
 
