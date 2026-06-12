@@ -13,4 +13,13 @@ class EntryController extends Controller
 
         return view('entries.index', compact('entries'));
     }
+
+    public function show(Entry $entry)
+    {
+        if ($entry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('entries.show', compact('entry'));
+    }
 }

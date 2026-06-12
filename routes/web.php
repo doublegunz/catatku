@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 
 Route::get('/entries', [EntryController::class, 'index']);
+Route::get('/entries/{entry}', [EntryController::class, 'show']);
