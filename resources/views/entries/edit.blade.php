@@ -54,6 +54,27 @@
                 @enderror
             </div>
 
+            {{-- Tag selection --}}
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #1e293b;">Tags</label>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    @foreach ($tags as $tag)
+                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input
+                                type="checkbox"
+                                name="tags[]"
+                                value="{{ $tag->id }}"
+                                @checked(
+                                    (is_array(old('tags')) && in_array($tag->id, old('tags')))
+                                    || (!old('tags') && $entry->tags->contains($tag->id))
+                                )
+                            >
+                            {{ $tag->name }}
+                        </label>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- Buttons --}}
             <div class="flex items-center justify-between">
                 <a href="/entries/{{ $entry->id }}"
