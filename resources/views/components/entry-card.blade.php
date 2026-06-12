@@ -38,11 +38,14 @@
            class="text-xs text-blue-600 hover:text-blue-800">
             Read
         </a>
-        <a href="/entries/{{ $entry->id }}/edit"
+        @can('update', $entry)
+        <a href="{{ route('entries.edit', $entry) }}"
            class="text-xs text-gray-500 hover:text-gray-800">
             Edit
         </a>
-        <form method="POST" action="/entries/{{ $entry->id }}"
+        @endcan
+        @can('delete', $entry)
+        <form method="POST" action="{{ route('entries.destroy', $entry) }}"
               onsubmit="return confirm('Delete this entry?')"
               class="ml-auto">
             @csrf
@@ -51,6 +54,7 @@
                 Delete
             </button>
         </form>
+        @endcan
     </div>
 
 </div>

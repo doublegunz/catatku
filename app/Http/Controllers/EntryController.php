@@ -6,6 +6,7 @@ use App\Models\Entry;
 use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Gate;
 
 class EntryController extends Controller
 {
@@ -50,20 +51,16 @@ class EntryController extends Controller
 
     public function show(Entry $entry)
     {
-        if ($entry->user_id !== auth()->id()) {
-            abort(403);
-        }
+        Gate::authorize('view', $entry);
 
-        $entry->load('comments.user');
+        $entry->load('comments.user', 'tags');
 
         return view('entries.show', compact('entry'));
     }
 
     public function edit(Entry $entry)
     {
-        if ($entry->user_id !== auth()->id()) {
-            abort(403);
-        }
+        Gate::authorize('update', $entry);
 
         $tags = Tag::orderBy('name')->get();
 
@@ -72,9 +69,7 @@ class EntryController extends Controller
 
     public function update(Request $request, Entry $entry): RedirectResponse
     {
-        if ($entry->user_id !== auth()->id()) {
-            abort(403);
-        }
+        Gate::authorize('update', $entry);
 
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
@@ -95,14 +90,11 @@ class EntryController extends Controller
 
     public function destroy(Entry $entry): RedirectResponse
     {
-        if ($entry->user_id !== auth()->id()) {
-            abort(403);
-        }
+        Gate::authorize('delete', $entry);
 
         $entry->delete();
 
-        return redirect('/entries')
-            ->with('success', 'Entry deleted successfully.');
+        return redirect()->route('entries.index')->with('success', 'Entry deleted.');
     }
 
     public function trash()
@@ -117,9 +109,7 @@ class EntryController extends Controller
 
     public function restore(Entry $entry)
     {
-        if ($entry->user_id !== auth()->id()) {
-            abort(403);
-        }
+        Gate::authorize('update', $entry);
 
         $entry->restore();
 
