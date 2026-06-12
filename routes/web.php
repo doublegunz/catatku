@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CommentController;
 
 Route::get('/', function () {
     return view('home');
@@ -24,11 +25,14 @@ Route::middleware('auth')->group(function () {
     // Add a route for logging out
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/entries', [EntryController::class, 'index']);
-    Route::get('/entries/create', [EntryController::class, 'create']);
-    Route::post('/entries', [EntryController::class, 'store']);
-    Route::get('/entries/{entry}', [EntryController::class, 'show']);
-    Route::get('/entries/{entry}/edit', [EntryController::class, 'edit']);
-    Route::put('/entries/{entry}', [EntryController::class, 'update']);
-    Route::delete('/entries/{entry}', [EntryController::class, 'destroy']);
+    Route::get('/entries', [EntryController::class, 'index'])->name('entries.index');
+    Route::get('/entries/create', [EntryController::class, 'create'])->name('entries.create');
+    Route::post('/entries', [EntryController::class, 'store'])->name('entries.store');
+    Route::get('/entries/{entry}', [EntryController::class, 'show'])->name('entries.show');
+    Route::get('/entries/{entry}/edit', [EntryController::class, 'edit'])->name('entries.edit');
+    Route::put('/entries/{entry}', [EntryController::class, 'update'])->name('entries.update');
+    Route::delete('/entries/{entry}', [EntryController::class, 'destroy'])->name('entries.destroy');
+
+    Route::post('/entries/{entry}/comments', [CommentController::class, 'store'])
+        ->name('comments.store');
 });
