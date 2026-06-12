@@ -9,13 +9,15 @@ use Illuminate\Http\RedirectResponse;
 
 class EntryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $entries = auth()->user()->entries()
-            ->with('tags')
-            ->withCount('comments')
-            ->latest()
-            ->get();
+        $query = auth()->user()->entries()->with('tags')->withCount('comments');
+
+        if ($request->filled('search')) {
+            $query->search($request->input('search'));
+        }
+
+        $entries = $query->latest()->get();
 
         return view('entries.index', compact('entries'));
     }
