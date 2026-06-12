@@ -41,4 +41,42 @@ class EntryController extends Controller
 
         return view('entries.show', compact('entry'));
     }
+
+    public function edit(Entry $entry)
+    {
+        if ($entry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        return view('entries.edit', compact('entry'));
+    }
+
+    public function update(Request $request, Entry $entry): RedirectResponse
+    {
+        if ($entry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $validated = $request->validate([
+            'title'   => 'required|string|max:255',
+            'content' => 'required|string',
+        ]);
+
+        $entry->update($validated);
+
+        return redirect('/entries/' . $entry->id)
+            ->with('success', 'Entry updated successfully.');
+    }
+
+    public function destroy(Entry $entry): RedirectResponse
+    {
+        if ($entry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $entry->delete();
+
+        return redirect('/entries')
+            ->with('success', 'Entry deleted successfully.');
+    }
 }
