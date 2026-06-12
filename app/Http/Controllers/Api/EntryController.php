@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\EntryResource;
 use App\Models\Entry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,14 +18,15 @@ class EntryController extends Controller
             ->latest()
             ->paginate(15);
 
-        return response()->json($entries);
+        return response()->json(EntryResource::collection($entries));
     }
 
     public function show(Entry $entry): JsonResponse
     {
         $entry->load('tags', 'user', 'comments.user');
+        $entry->loadCount('comments');
 
-        return response()->json($entry);
+        return response()->json(new EntryResource($entry));
     }
 
     public function store(Request $request): JsonResponse
@@ -44,8 +46,9 @@ class EntryController extends Controller
         $entry->tags()->sync($validated['tags'] ?? []);
 
         $entry->load('tags', 'user');
+        $entry->loadCount('comments');
 
-        return response()->json($entry, 201);
+        return response()->json(new EntryResource($entry), 201);
     }
 
     public function update(Request $request, Entry $entry): JsonResponse
