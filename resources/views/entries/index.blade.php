@@ -22,20 +22,25 @@
             </a>
         </div>
 
-        {{-- Entry list --}}
-        @foreach ($entries as $entry)
+        @forelse ($entries as $entry)
             <div class="bg-white rounded-xl border border-gray-200 p-5 mb-4">
                 <h3 class="font-semibold text-gray-900 mb-1">
-                    {{ $entry['title'] }}
+                    {{ $entry->title }}
                 </h3>
-                <p class="text-sm text-gray-500 mb-3">
-                    {{ $entry['created_at'] }}
+                <p class="text-xs text-gray-400 mb-3">
+                    {{ $entry->created_at->format('d F Y') }}
                 </p>
-                <p class="text-sm text-gray-700 line-clamp-2">
-                    {{ $entry['content'] }}
+                <p class="text-sm text-gray-600 line-clamp-2">
+                    {{ $entry->content }}
                 </p>
             </div>
-        @endforeach
+        @empty
+            <div class="text-center py-16 text-gray-400">
+                <p class="text-5xl mb-4">📓</p>
+                <p class="font-medium text-gray-500">No entries yet</p>
+                <p class="text-sm mt-1">Start writing your first entry!</p>
+            </div>
+        @endforelse
 
     </div>
 
