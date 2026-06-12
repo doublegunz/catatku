@@ -5,18 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['title', 'content'])]
-class Entry extends Model
+#[Fillable(['body', 'user_id'])]
+class Comment extends Model
 {
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function comments(): HasMany
+    public function entry(): BelongsTo
     {
-        return $this->hasMany(Comment::class);
+        return $this->belongsTo(Entry::class);
     }
 }

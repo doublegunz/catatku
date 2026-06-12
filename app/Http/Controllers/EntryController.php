@@ -39,6 +39,8 @@ class EntryController extends Controller
             abort(403);
         }
 
+        $entry->load('comments.user');
+
         return view('entries.show', compact('entry'));
     }
 
