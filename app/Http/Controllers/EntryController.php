@@ -10,7 +10,7 @@ class EntryController extends Controller
 {
     public function index()
     {
-        $entries = Entry::with('user')->latest()->get();
+        $entries = auth()->user()->entries()->latest()->get();
 
         return view('entries.index', compact('entries'));
     }

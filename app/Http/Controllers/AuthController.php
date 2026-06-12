@@ -34,4 +34,42 @@ class AuthController extends Controller
         return redirect('/entries')
             ->with('success', 'Welcome to Catatku, ' . $user->name . '!');
     }
+
+    // --- Login ---
+
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
+    public function login(Request $request): RedirectResponse
+    {
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
+
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            return redirect('/entries')
+                ->with('success', 'Welcome back!');
+        }
+
+        return back()->withErrors([
+            'email' => 'The email or password you entered is incorrect.',
+        ])->onlyInput('email');
+    }
+
+    // --- Logout ---
+
+    public function logout(Request $request): RedirectResponse
+    {
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/login');
+    }
 }
