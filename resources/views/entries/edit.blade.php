@@ -10,7 +10,7 @@
     <h2 class="text-lg font-semibold text-gray-900 mb-4">Edit Entry</h2>
 
     <div class="bg-white rounded-xl border border-gray-200 p-6">
-        <form method="POST" action="/entries/{{ $entry->id }}">
+        <form method="POST" action="/entries/{{ $entry->id }}" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -51,6 +51,26 @@
                 >{{ old('content', $entry->content) }}</textarea>
                 @error('content')
                     <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Cover image --}}
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #1e293b;">
+                    Cover Image (optional)
+                </label>
+                @if($entry->cover_image)
+                    <img src="{{ asset('storage/' . $entry->cover_image) }}"
+                         alt="{{ $entry->title }}"
+                         style="max-width: 100%; height: 120px; object-fit: cover; border-radius: 6px; margin-bottom: 8px;">
+                @endif
+                <input type="file" name="cover_image" accept="image/*"
+                       style="border: 1px solid #d1d5db; border-radius: 6px; padding: 8px; width: 100%; box-sizing: border-box;">
+                <p style="color: #9ca3af; font-size: 0.8em; margin-top: 4px;">
+                    JPG, PNG, or WebP. Max 2MB. Leave empty to keep the current image.
+                </p>
+                @error('cover_image')
+                    <p style="color: #dc2626; font-size: 0.85em; margin-top: 4px;">{{ $message }}</p>
                 @enderror
             </div>
 

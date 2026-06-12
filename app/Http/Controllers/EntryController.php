@@ -7,6 +7,7 @@ use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 
 class EntryController extends Controller
 {
@@ -33,15 +34,22 @@ class EntryController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
-            'tags'    => 'nullable|array',
-            'tags.*'  => 'exists:tags,id',
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
         ]);
 
+        if ($request->hasFile('cover_image')) {
+            $validated['cover_image'] = $request->file('cover_image')
+                ->store('entries/covers', 'public');
+        }
+
         $entry = $request->user()->entries()->create([
-            'title'   => $validated['title'],
-            'content' => $validated['content'],
+            'title'       => $validated['title'],
+            'content'     => $validated['content'],
+            'cover_image' => $validated['cover_image'] ?? null,
         ]);
 
         $entry->tags()->sync($validated['tags'] ?? []);
@@ -72,20 +80,30 @@ class EntryController extends Controller
         Gate::authorize('update', $entry);
 
         $validated = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
-            'tags'    => 'nullable|array',
-            'tags.*'  => 'exists:tags,id',
+            'title'       => 'required|string|max:255',
+            'content'     => 'required|string',
+            'cover_image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+            'tags'        => 'nullable|array',
+            'tags.*'      => 'exists:tags,id',
         ]);
 
+        if ($request->hasFile('cover_image')) {
+            if ($entry->cover_image) {
+                Storage::disk('public')->delete($entry->cover_image);
+            }
+            $validated['cover_image'] = $request->file('cover_image')
+                ->store('entries/covers', 'public');
+        }
+
         $entry->update([
-            'title'   => $validated['title'],
-            'content' => $validated['content'],
+            'title'       => $validated['title'],
+            'content'     => $validated['content'],
+            'cover_image' => $validated['cover_image'] ?? $entry->cover_image,
         ]);
 
         $entry->tags()->sync($validated['tags'] ?? []);
 
-        return redirect()->route('entries.show', $entry)->with('success', 'Entry updated!');
+        return redirect()->route('entries.index')->with('success', 'Entry updated!');
     }
 
     public function destroy(Entry $entry): RedirectResponse

@@ -1,6 +1,12 @@
 <x-layout>
     <div style="max-width: 700px; margin: 0 auto;">
 
+        @if($entry->cover_image)
+            <img src="{{ asset('storage/' . $entry->cover_image) }}"
+                 alt="{{ $entry->title }}"
+                 style="width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 16px;">
+        @endif
+
         {{-- Entry content --}}
         <h1 style="font-size: 1.5em; color: #1e293b; margin-bottom: 8px;">{{ $entry->title }}</h1>
         <p style="color: #888; font-size: 0.85em; margin-bottom: 16px;">
