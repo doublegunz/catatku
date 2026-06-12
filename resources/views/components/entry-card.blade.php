@@ -1,60 +1,50 @@
-@props(['entry'])
-
-<div class="bg-white rounded-xl border border-gray-200 p-5 hover:border-gray-300 transition-colors">
-
-    {{-- Header: title and date --}}
-    <div class="flex items-start justify-between gap-3 mb-3">
-        <a href="/entries/{{ $entry->id }}"
-           class="font-semibold text-gray-900 hover:text-gray-600 leading-snug">
-            {{ $entry->title }}
+<div style="border: 1px solid #e5e7eb; padding: 16px; margin-bottom: 12px; border-radius: 8px;">
+    <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 8px;">
+        <a href="{{ route('entries.show', $entry) }}"
+           style="color: #1e293b; text-decoration: none; font-weight: 600; line-height: 1.4;">
+            {{ $truncatedTitle() }}
         </a>
-        <span class="text-xs text-gray-400 whitespace-nowrap mt-0.5">
+        <span style="font-size: 0.75em; color: #9ca3af; white-space: nowrap; margin-top: 2px;">
             {{ $entry->created_at->format('d M Y') }}
         </span>
     </div>
 
-    {{-- Content snippet --}}
-    <p class="text-sm text-gray-500 line-clamp-2 mb-2">
+    <p style="color: #6b7280; margin: 0 0 8px; font-size: 0.9em; line-height: 1.5;">
         {{ $entry->excerpt }}
     </p>
+
     <span style="color: #9ca3af; font-size: 0.8em;">
-        {{ $entry->reading_time }} min read · {{ $entry->created_at_human }}
+        {{ $entry->reading_time }} min read
     </span>
 
-    {{-- Tags --}}
     @if($entry->tags->isNotEmpty())
-        <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
-            @foreach ($entry->tags as $tag)
-                <span style="background: #dbeafe; color: #1e40af; padding: 2px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 600;">
+        <div style="margin-top: 8px;">
+            @foreach($entry->tags as $tag)
+                <span style="background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 12px; font-size: 0.75em;">
                     {{ $tag->name }}
                 </span>
             @endforeach
         </div>
     @endif
 
-    {{-- Action buttons --}}
-    <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
-        <a href="/entries/{{ $entry->id }}"
-           class="text-xs text-blue-600 hover:text-blue-800">
+    <div style="display: flex; align-items: center; gap: 12px; padding-top: 12px; border-top: 1px solid #f3f4f6; margin-top: 12px;">
+        <a href="{{ route('entries.show', $entry) }}" style="font-size: 0.75em; color: #2563eb;">
             Read
         </a>
         @can('update', $entry)
-        <a href="{{ route('entries.edit', $entry) }}"
-           class="text-xs text-gray-500 hover:text-gray-800">
-            Edit
-        </a>
+            <a href="{{ route('entries.edit', $entry) }}" style="font-size: 0.75em; color: #d97706; text-decoration: none;">
+                Edit
+            </a>
         @endcan
         @can('delete', $entry)
-        <form method="POST" action="{{ route('entries.destroy', $entry) }}"
-              onsubmit="return confirm('Delete this entry?')"
-              class="ml-auto">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="text-xs text-red-400 hover:text-red-600">
-                Delete
-            </button>
-        </form>
+            <form method="POST" action="{{ route('entries.destroy', $entry) }}" style="display: inline;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" onclick="return confirm('Delete this entry?')"
+                    style="font-size: 0.75em; color: #dc2626; background: none; border: none; cursor: pointer; padding: 0;">
+                    Delete
+                </button>
+            </form>
         @endcan
     </div>
-
 </div>

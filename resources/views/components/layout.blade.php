@@ -38,11 +38,17 @@
     {{-- Page content --}}
     <main class="max-w-2xl mx-auto px-4 py-8">
 
-        {{-- Flash success message --}}
+        {{-- Flash messages --}}
         @if (session('success'))
-            <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-800 text-sm rounded-xl">
+            <x-alert type="success">
                 {{ session('success') }}
-            </div>
+            </x-alert>
+        @endif
+
+        @if (session('error'))
+            <x-alert type="error">
+                {{ session('error') }}
+            </x-alert>
         @endif
 
         {{ $slot }}
