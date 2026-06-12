@@ -26,4 +26,9 @@
         @endforelse
     </div>
 
+    {{-- Pagination links --}}
+    <div style="margin-top: 20px;">
+        {{ $entries->links() }}
+    </div>
+
 </x-layout>
