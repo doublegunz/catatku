@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entry;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 
@@ -10,14 +11,20 @@ class EntryController extends Controller
 {
     public function index()
     {
-        $entries = auth()->user()->entries()->latest()->get();
+        $entries = auth()->user()->entries()
+            ->with('tags')
+            ->withCount('comments')
+            ->latest()
+            ->get();
 
         return view('entries.index', compact('entries'));
     }
 
     public function create()
     {
-        return view('entries.create');
+        $tags = Tag::orderBy('name')->get();
+
+        return view('entries.create', compact('tags'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -25,12 +32,18 @@ class EntryController extends Controller
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
+            'tags'    => 'nullable|array',
+            'tags.*'  => 'exists:tags,id',
         ]);
 
-        $request->user()->entries()->create($validated);
+        $entry = $request->user()->entries()->create([
+            'title'   => $validated['title'],
+            'content' => $validated['content'],
+        ]);
 
-        return redirect('/entries')
-            ->with('success', 'Entry saved successfully.');
+        $entry->tags()->sync($validated['tags'] ?? []);
+
+        return redirect()->route('entries.index')->with('success', 'Entry created!');
     }
 
     public function show(Entry $entry)
@@ -50,7 +63,9 @@ class EntryController extends Controller
             abort(403);
         }
 
-        return view('entries.edit', compact('entry'));
+        $tags = Tag::orderBy('name')->get();
+
+        return view('entries.edit', compact('entry', 'tags'));
     }
 
     public function update(Request $request, Entry $entry): RedirectResponse
@@ -62,12 +77,18 @@ class EntryController extends Controller
         $validated = $request->validate([
             'title'   => 'required|string|max:255',
             'content' => 'required|string',
+            'tags'    => 'nullable|array',
+            'tags.*'  => 'exists:tags,id',
         ]);
 
-        $entry->update($validated);
+        $entry->update([
+            'title'   => $validated['title'],
+            'content' => $validated['content'],
+        ]);
 
-        return redirect('/entries/' . $entry->id)
-            ->with('success', 'Entry updated successfully.');
+        $entry->tags()->sync($validated['tags'] ?? []);
+
+        return redirect()->route('entries.show', $entry)->with('success', 'Entry updated!');
     }
 
     public function destroy(Entry $entry): RedirectResponse

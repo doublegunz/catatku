@@ -18,6 +18,17 @@
         {{ $entry->content }}
     </p>
 
+    {{-- Tags --}}
+    @if($entry->tags->isNotEmpty())
+        <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
+            @foreach ($entry->tags as $tag)
+                <span style="background: #dbeafe; color: #1e40af; padding: 2px 10px; border-radius: 12px; font-size: 0.75em; font-weight: 600;">
+                    {{ $tag->name }}
+                </span>
+            @endforeach
+        </div>
+    @endif
+
     {{-- Action buttons --}}
     <div class="flex items-center gap-3 pt-3 border-t border-gray-100">
         <a href="/entries/{{ $entry->id }}"
