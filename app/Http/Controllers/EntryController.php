@@ -17,7 +17,7 @@ class EntryController extends Controller
             $query->search($request->input('search'));
         }
 
-        $entries = $query->latest()->get();
+        $entries = $query->latest()->paginate(15);
 
         return view('entries.index', compact('entries'));
     }
@@ -103,5 +103,26 @@ class EntryController extends Controller
 
         return redirect('/entries')
             ->with('success', 'Entry deleted successfully.');
+    }
+
+    public function trash()
+    {
+        $entries = auth()->user()->entries()
+            ->onlyTrashed()
+            ->latest('deleted_at')
+            ->paginate(15);
+
+        return view('entries.trash', compact('entries'));
+    }
+
+    public function restore(Entry $entry)
+    {
+        if ($entry->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $entry->restore();
+
+        return redirect()->route('entries.trash')->with('success', 'Entry restored!');
     }
 }
