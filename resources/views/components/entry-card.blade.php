@@ -14,9 +14,12 @@
     </div>
 
     {{-- Content snippet --}}
-    <p class="text-sm text-gray-500 line-clamp-2 mb-4">
-        {{ $entry->content }}
+    <p class="text-sm text-gray-500 line-clamp-2 mb-2">
+        {{ $entry->excerpt }}
     </p>
+    <span style="color: #9ca3af; font-size: 0.8em;">
+        {{ $entry->reading_time }} min read · {{ $entry->created_at_human }}
+    </span>
 
     {{-- Tags --}}
     @if($entry->tags->isNotEmpty())
