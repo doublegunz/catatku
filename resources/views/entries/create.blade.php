@@ -93,11 +93,9 @@
                    class="text-sm text-gray-500 hover:text-gray-900">
                     Cancel
                 </a>
-                <button type="submit"
-                    class="bg-gray-900 text-white text-sm px-5 py-2 rounded-lg
-                           hover:bg-gray-700 transition-colors">
+                <x-button type="submit" variant="primary">
                     Save Entry
-                </button>
+                </x-button>
             </div>
 
         </form>
